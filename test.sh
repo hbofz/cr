@@ -8,7 +8,7 @@ unset ANTHROPIC_API_KEY ANTHROPIC_AUTH_TOKEN ANTHROPIC_BASE_URL CLAUDE_CODE_USE_
 check() {  # check <wrap|pass> <env assignments or -> <claude args...>
   local want=$1 envs=$2 got; shift 2
   [ "$envs" = - ] && envs=
-  got=$(env -u TMUX SSH_CONNECTION="1.2.3.4 5 6.7.8.9 22" ${envs:+"$envs"} script -qec "./cr _wants $(printf '%q ' "$@")" /dev/null </dev/null | tr -d '\r')
+  got=$(env -u TMUX TERM=xterm-256color SSH_CONNECTION="1.2.3.4 5 6.7.8.9 22" ${envs:+"$envs"} script -qec "./cr _wants $(printf '%q ' "$@")" /dev/null </dev/null | tr -d '\r')
   [ "$got" = "$want" ] || { echo "FAIL: claude $* ($envs) -> $got, want $want"; fail=1; }
 }
 check wrap -
@@ -38,6 +38,8 @@ check pass - -w --tmux
 check pass - --model sonnet -p hi
 check pass SSH_CONNECTION=
 check pass TMUX=/tmp/tmux-1000/default,1,0
+check pass TERM=dumb
+check pass TERM=
 [ "$(env -u TMUX SSH_CONNECTION=x ./cr _wants </dev/null)" = pass ] || { echo "FAIL: no tty should pass"; fail=1; }
 
 # 2. What claude actually receives, against a fake claude on a private tmux server and state dir.
@@ -56,7 +58,7 @@ start() {  # start <expected argv> <expected exit> <env assignments or -> <claud
   [ "$envs" = - ] && envs=
   rm -f "$tmp/argv"
   env -u TMUX PATH="$tmp/bin:$PATH" XDG_RUNTIME_DIR="$tmp" TMUX_TMPDIR="$tmp" FAKE_OUT="$tmp/argv" \
-    SSH_CONNECTION=x ${envs:+"$envs"} script -qec "./cr --auto $(printf '%q ' "$@")" /dev/null </dev/null >"$tmp/screen"
+    TERM=xterm-256color SSH_CONNECTION=x ${envs:+"$envs"} script -qec "./cr --auto $(printf '%q ' "$@")" /dev/null </dev/null >"$tmp/screen"
   rc=$?
   [ "$(head -1 "$tmp/argv" 2>/dev/null)" = "$want" ] || { echo "FAIL: claude $* got argv $(head -1 "$tmp/argv" 2>/dev/null), want $want"; fail=1; }
   [ "$rc" = "$code" ] || { echo "FAIL: claude $* exited $rc, want $code"; fail=1; }

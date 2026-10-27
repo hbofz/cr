@@ -37,6 +37,7 @@ term_ok() { infocmp "${TERM:-dumb}" >/dev/null 2>&1 || export TERM=xterm-256colo
 # Should this `claude` call get a cr session? Only interactive chats typed into an SSH login.
 wants_cr() {
   [ -n "${SSH_CONNECTION:-}" ] && [ -z "${TMUX:-}" ] && [ -t 0 ] && [ -t 1 ] || return 1
+  [ "${TERM:-dumb}" != dumb ] || return 1  # tmux can't draw on a dumb terminal (Emacs shells, some IDEs)
   local a
   for a in "$@"; do
     case $a in

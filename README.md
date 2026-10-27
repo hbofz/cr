@@ -75,6 +75,7 @@ Sessions already running keep the version they started with.
 - **Ghostty:** servers often lack the `xterm-ghostty` terminfo, which breaks `clear` and tmux. cr falls back to `xterm-256color`. To fix it everywhere, add `shell-integration-features = ssh-terminfo` to your Ghostty config.
 - **Dead connections can look attached.** Without keepalives, a sleeping laptop's SSH connection can count as attached for about two hours until TCP gives up, which also delays cleanup. `ClientAliveInterval 60` in the server's `sshd_config` drops them within minutes. `cr a` takes the session over either way.
 - **Wrappers like `env VAR=... claude`** skip the shell function. Use a subshell with `export` instead: `myclaude() ( export VAR=...; claude "$@" )`.
+- Trackpad and mouse scrolling work inside cr. To select text, hold Shift while dragging.
 - Claude's own Ctrl-B shortcut needs Ctrl-B twice inside cr (it's the tmux prefix).
 
 ## Tests

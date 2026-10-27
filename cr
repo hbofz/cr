@@ -25,7 +25,8 @@ cr: Claude Code sessions that survive SSH disconnects (lid closed) and stay reac
   cr -h | --help        this help
 
 In a session: Ctrl-Z drops back to your shell (the session keeps running), so does closing the
-terminal or the lid. Claude's own Ctrl-B shortcut needs Ctrl-B twice. `command claude` skips cr.
+terminal or the lid. Scrolling works; hold Shift while dragging to select text.
+Claude's own Ctrl-B shortcut needs Ctrl-B twice. `command claude` skips cr.
 A reaped conversation comes back with `claude --resume`.
 EOF
 }
